@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/symbol"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:background="@color/background"
+        android:fontFamily="@font/yekan_regular"
+        android:gravity="center"
+        android:text="Coin Market Cap"
+        android:textColor="@color/white"
+        android:textSize="@dimen/txt_24"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/sort_btn"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dimen_48"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="5dp"
+        android:background="@drawable/bg_8_blue"
+        android:drawablePadding="15dp"
+        android:gravity="start|center_vertical"
+        android:paddingStart="15dp"
+        android:text="@string/sort_by"
+        android:textColor="@color/white"
+        app:drawableStartCompat="@drawable/ic_sort"
+        app:layout_constraintEnd_toStartOf="@id/filter_btn"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/symbol" />
+
+    <TextView
+        android:id="@+id/filter_btn"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/dimen_48"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        android:background="@drawable/bg_8_blue"
+        android:drawablePadding="15dp"
+        android:gravity="start|center_vertical"
+        android:paddingStart="15dp"
+        android:text="@string/filter"
+        android:textColor="@color/white"
+        app:drawableStartCompat="@drawable/ic_filter_list"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/sort_btn"
+        app:layout_constraintTop_toBottomOf="@id/symbol" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sort_btn" />
+
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:backgroundTint="@color/background"
+        android:theme="@style/progressBarBlue"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

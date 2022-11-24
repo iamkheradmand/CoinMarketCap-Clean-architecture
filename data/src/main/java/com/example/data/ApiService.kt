@@ -15,11 +15,20 @@ interface ApiService {
 
     @GET(Constants.URL_LISTINGS_LATEST)
     @Headers("Accept: application/json", "X-CMC_PRO_API_KEY: ${Constants.API_KEY}")
-    suspend fun getCoinsList(@Query("limit") limit : Int): GetCoinBaseResponse
+    suspend fun getCoinsList(
+        @Query("start") page: Int = 1,
+        @Query("limit") limit: Int? = 20,
+        @Query("sort") sort: String? = null,
+        @Query("sort_dir") sort_dir: String? = null,
+        @Query("percent_change_24h_min") percent_change_24h_min: Long? = null,
+        @Query("percent_change_24h_max") percent_change_24h_max: Long? = null,
+        @Query("volume_24h_min") volume_24h_min: Long? = null,
+        @Query("volume_24h_max") volume_24h_max: Long? = null,
+    ): GetCoinBaseResponse
 
     @GET(Constants.URL_INFO)
     @Headers("Accept: application/json", "X-CMC_PRO_API_KEY: ${Constants.API_KEY}")
-    suspend fun getInfo(@Query("id") id : Long): ResponseBody
+    suspend fun getInfo(@Query("id") id: Long): ResponseBody
 
 
 }

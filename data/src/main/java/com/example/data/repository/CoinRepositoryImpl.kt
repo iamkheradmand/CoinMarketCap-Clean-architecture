@@ -6,13 +6,12 @@ import com.example.data.datasource.CoinRemoteSource
 import com.example.data.db.AppDatabase
 import com.example.data.mapper.GetCoinBaseResponseToDomainModelMapper
 import com.example.data.mapper.GetInfoResponseToDomainModelMapper
+import com.example.data.mapper.SortFilterToQueryMapper
 import com.example.data.model.local.CoinInfoEntity
 import com.example.data.model.remote.GetInfoResponse
 import com.example.data.utils.Utils
 import com.example.domain.CoinRepository
-import com.example.domain.entities.ApiResult
-import com.example.domain.entities.CoinDomainModel
-import com.example.domain.entities.InfoDomainModel
+import com.example.domain.entities.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -30,6 +29,7 @@ class CoinRepositoryImpl @Inject constructor(
     private val remoteSource: CoinRemoteSource,
     private val coinBaseResponseMapper: GetCoinBaseResponseToDomainModelMapper,
     private val infoResponseMapper: GetInfoResponseToDomainModelMapper,
+    private val sortFilterToQueryMapper: SortFilterToQueryMapper
 ) : CoinRepository {
 
     override suspend fun getCoinsList(): Flow<ApiResult<List<CoinDomainModel>>> =
@@ -45,19 +45,19 @@ class CoinRepositoryImpl @Inject constructor(
                     coinBaseResponseMapper.toDomainModel(coinResponseModel, getInfoModel)
                 }
 
-                val coinsList = result.map {
-                    CoinInfoEntity(
-                        coinId = it.id,
-                        coinLogo = it.logo,
-                        coinName = it.name,
-                        coinSymbol = it.symbol,
-                        coinPriceByUsd = it.priceByUsd,
-                        coinPercent_change_24hByUSD = it.percent_change_24hByUSD,
-                        coinMarketCap = it.market_cap ?: " "
-                    )
-                }
-
-                coinLocalSource.insertAllCoins(coinsList)
+//                val coinsList = result.map {
+//                    CoinInfoEntity(
+//                        coinId = it.id,
+//                        coinLogo = it.logo,
+//                        coinName = it.name,
+//                        coinSymbol = it.symbol,
+//                        coinPriceByUsd = it.priceByUsd,
+//                        coinPercent_change_24hByUSD = it.percent_change_24hByUSD,
+//                        coinMarketCap = it.market_cap ?: " "
+//                    )
+//                }
+//
+//                coinLocalSource.insertAllCoins(coinsList)
 
                 Log.e("CoinRepositoryImpl", "coinLocalSource database updated")
 
@@ -105,6 +105,32 @@ class CoinRepositoryImpl @Inject constructor(
             }
 
         }.flowOn(Dispatchers.IO)
+
+    override suspend fun getCoinsListByQuery(
+        page : Int,
+        sortModel: SortModel,
+        filterModel: FilterModel
+    ): Flow<ApiResult<List<CoinDomainModel>>> =
+        flow {
+            try {
+
+                val queryModel = sortFilterToQueryMapper.toQueryModel(page, sortModel, filterModel)
+
+                val result = remoteSource.getCoinsByQuery(queryModel).data.map { coinResponseModel ->
+                    val infoResult = remoteSource.getInfo(coinResponseModel.id)
+                    val mainJSONObj = JSONObject(infoResult.string()).getJSONObject("data")
+                    val dataObject = mainJSONObj.getJSONObject("${coinResponseModel.id}").toString()
+                    val getInfoModel = Utils.jsonConverter(dataObject, GetInfoResponse::class.java)
+                    coinBaseResponseMapper.toDomainModel(coinResponseModel, getInfoModel)
+                }
+
+                emit(ApiResult.Success(result))
+            } catch (e: Exception) {
+                emit(ApiResult.Failure(e.toString()))
+            }
+
+        }.flowOn(Dispatchers.IO)
+
 
 
 }

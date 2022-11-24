@@ -4,10 +4,7 @@ import com.example.data.ApiService
 import com.example.data.datasource.CoinLocalSource
 import com.example.data.datasource.CoinRemoteSource
 import com.example.data.db.CoinDao
-import com.example.data.mapper.GetCoinBaseResponseMapperImpl
-import com.example.data.mapper.GetCoinBaseResponseToDomainModelMapper
-import com.example.data.mapper.GetInfoResponseMapperImpl
-import com.example.data.mapper.GetInfoResponseToDomainModelMapper
+import com.example.data.mapper.*
 import com.example.data.repository.CoinRepositoryImpl
 import com.example.data.source.CoinLocalSourceImpl
 import com.example.data.source.CoinRemoteSourceImpl
@@ -47,15 +44,21 @@ object CoinRepositoryModule {
 
     @Provides
     @Singleton
+    fun provideQueryMapper(): SortFilterToQueryMapper = QueryMapperImpl()
+
+    @Provides
+    @Singleton
     fun provideCoinRepository(
         coinLocalSource: CoinLocalSource,
         remoteSource: CoinRemoteSource,
         coinBaseResponseMapper: GetCoinBaseResponseToDomainModelMapper,
         infoResponseToDomainModelMapper: GetInfoResponseToDomainModelMapper,
+        sortFilterToQueryMapper: SortFilterToQueryMapper,
     ): CoinRepository = CoinRepositoryImpl(
         coinLocalSource,
         remoteSource,
         coinBaseResponseMapper,
-        infoResponseToDomainModelMapper
+        infoResponseToDomainModelMapper,
+        sortFilterToQueryMapper
     )
 }

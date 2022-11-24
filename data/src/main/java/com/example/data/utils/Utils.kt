@@ -2,6 +2,7 @@ package com.example.data.utils
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.widget.Toast
 import com.google.gson.Gson
 
 /**
@@ -18,5 +19,9 @@ object Utils {
 
     fun <T> jsonConverter(json: String, clazz: Class<T>): T {
         return Gson().fromJson(json, clazz)
+    }
+
+    fun showToast(context: Context, msg: String) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 }

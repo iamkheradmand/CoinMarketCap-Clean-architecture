@@ -8,6 +8,11 @@ import com.google.gson.annotations.SerializedName
  */
 
 data class QuoteModel(
+    @SerializedName("USD")
+    @Expose
+    val usd: USDModel
+)
+data class USDModel(
     @SerializedName("price")
     @Expose
     val price: Double,

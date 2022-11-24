@@ -15,7 +15,7 @@
     </style>
 
     <style name="progressBarBlue" parent="@style/Theme.AppCompat">
-        <item name="colorAccent">@color/colorSecondary</item>
+        <item name="colorAccent">@color/background</item>
     </style>
 
 </resources>

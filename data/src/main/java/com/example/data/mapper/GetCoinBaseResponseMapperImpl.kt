@@ -21,9 +21,9 @@ class GetCoinBaseResponseMapperImpl @Inject constructor() : GetCoinBaseResponseT
             logo = getInfoResponse?.logo ?: "error",
             name = coinResponse.name,
             symbol = coinResponse.symbol,
-            priceByUsd = coinResponse.quote.price,
-            percent_change_24hByUSD = coinResponse.quote.percentChange24h,
-            market_cap = coinResponse.quote.marketCap
+            priceByUsd = coinResponse.quote.usd.price,
+            percent_change_24hByUSD = coinResponse.quote.usd.percentChange24h,
+            market_cap = coinResponse.quote.usd.marketCap
         )
     }
 }

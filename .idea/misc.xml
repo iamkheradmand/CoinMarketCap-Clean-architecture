@@ -3,7 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/drawable/bg_8_blue.xml" value="0.17777777777777778" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/drawable/ic_filter_list.xml" value="0.17777777777777778" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/drawable/ic_sort.xml" value="0.17777777777777778" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/activity_main.xml" value="0.12360688956433637" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/adapter_coins_list.xml" value="0.14583333333333334" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/adapter_loading.xml" value="0.14583333333333334" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/fragment_home.xml" value="0.176" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/fragment_splash.xml" value="0.17300724637681159" />
       </map>
     </option>

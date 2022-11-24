@@ -15,7 +15,7 @@
         android:layout_height="35dp"
         android:layout_gravity="bottom|center_horizontal"
         android:layout_marginBottom="20dp"
-        android:backgroundTint="@color/colorSecondary"
+        android:backgroundTint="@color/background_blue"
         android:theme="@style/progressBarBlue" />
 
 </FrameLayout>

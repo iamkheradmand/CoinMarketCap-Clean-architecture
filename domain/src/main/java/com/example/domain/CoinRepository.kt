@@ -1,8 +1,6 @@
 package com.example.domain
 
-import com.example.domain.entities.ApiResult
-import com.example.domain.entities.CoinDomainModel
-import com.example.domain.entities.InfoDomainModel
+import com.example.domain.entities.*
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -11,9 +9,11 @@ import kotlinx.coroutines.flow.Flow
 
 interface CoinRepository {
 
-    suspend fun getCoinsList() : Flow<ApiResult<List<CoinDomainModel>>>
+    suspend fun getCoinsList(): Flow<ApiResult<List<CoinDomainModel>>>
 
-    suspend fun getCoinsListLocal() : Flow<List<CoinDomainModel>>
+    suspend fun getCoinsListLocal(): Flow<List<CoinDomainModel>>
 
-    suspend fun getInfo(id : Long) : Flow<ApiResult<InfoDomainModel>>
+    suspend fun getInfo(id: Long): Flow<ApiResult<InfoDomainModel>>
+
+    suspend fun getCoinsListByQuery(page : Int, sortModel: SortModel, filterModel: FilterModel): Flow<ApiResult<List<CoinDomainModel>>>
 }
