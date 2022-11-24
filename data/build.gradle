@@ -40,8 +40,10 @@ dependencies {
     implementation project(path:':domain')
 
     //room
-    implementation "androidx.room:room-runtime:2.4.2"
-    kapt "androidx.room:room-compiler:2.4.2"
+    def room_version = "2.4.3"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 
     //coroutines
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
@@ -49,8 +51,9 @@ dependencies {
 
     //Hilt
     implementation "com.google.dagger:hilt-android:$hilt_version"
+    implementation "androidx.hilt:hilt-work:1.0.0"
     kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
-
+    kapt "androidx.hilt:hilt-compiler:1.0.0"
     //picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
 
@@ -61,6 +64,9 @@ dependencies {
     implementation "com.squareup.retrofit2:adapter-rxjava2:$retrofitVersion"
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.1'
     implementation 'com.google.code.gson:gson:2.8.6'
+
+    def work_version = "2.7.1"
+    implementation "androidx.work:work-runtime-ktx:$work_version"
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

@@ -35,17 +35,25 @@ class SplashFragment : BaseFragment<FragmentSplashBinding>() {
     }
 
     private fun getCoinsList() {
-        viewModel.getCoinsList().observe(viewLifecycleOwner, { result ->
-                when (result) {
-                    is ApiResult.Success -> {
-                        Log.e("SplashFragment", "Success" + result.data!![0].name)
-                    }
+//        viewModel.getCoinsList().observe(viewLifecycleOwner, { result ->
+//                when (result) {
+//                    is ApiResult.Success -> {
+//                        Log.e("SplashFragment", "Success" + result.data!![0].name)
+//                    }
+//
+//                    is ApiResult.Failure -> {
+//                        Log.e("SplashFragment", "Failure" + result.message)
+//                    }
+//                }
+//            })
 
-                    is ApiResult.Failure -> {
-                        Log.e("SplashFragment", "Failure" + result.message)
-                    }
-                }
-            })
+        viewModel.getDB().observe(viewLifecycleOwner, { result ->
+            if (result != null && result.size > 0)
+                Log.e("SplashFragment", "getDB Success" + result.size)
+            else
+                Log.e("SplashFragment", "getDB Success is empty")
+
+        })
     }
 
     override fun onResume() {

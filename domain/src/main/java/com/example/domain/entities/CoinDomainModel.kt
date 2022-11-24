@@ -6,6 +6,7 @@ package com.example.domain.entities
 
 data class CoinDomainModel(
     val id : Long,
+    val logo : String,
     val name : String,
     val symbol : String,
     val priceByUsd : Double,

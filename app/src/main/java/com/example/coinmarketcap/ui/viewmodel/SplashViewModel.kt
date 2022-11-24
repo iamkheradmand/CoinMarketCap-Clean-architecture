@@ -15,7 +15,13 @@ import javax.inject.Inject
 class SplashViewModel @Inject constructor (val getCoinsListUseCase: GetCoinsListUseCase) : ViewModel() {
 
     fun getCoinsList() = liveData(Dispatchers.IO) {
-        getCoinsListUseCase.execute().collect {
+        getCoinsListUseCase.getCoinsList().collect {
+            emit(it)
+        }
+    }
+
+    fun getDB() = liveData(Dispatchers.IO) {
+        getCoinsListUseCase.getCoinsListLocal().collect {
             emit(it)
         }
     }

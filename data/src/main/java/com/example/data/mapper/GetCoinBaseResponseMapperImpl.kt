@@ -1,7 +1,7 @@
 package com.example.data.mapper
 
-import com.example.data.model.GetCoinBaseResponse
-import com.example.data.model.GetCoinResponse
+import com.example.data.model.remote.GetCoinResponse
+import com.example.data.model.remote.GetInfoResponse
 import com.example.domain.entities.CoinDomainModel
 import javax.inject.Inject
 
@@ -10,13 +10,15 @@ import javax.inject.Inject
  */
 
 interface GetCoinBaseResponseToDomainModelMapper {
-    fun toDomainModel(coinResponse: GetCoinResponse): CoinDomainModel
+    fun toDomainModel(coinResponse: GetCoinResponse, getInfoResponse: GetInfoResponse?): CoinDomainModel
 }
 
 class GetCoinBaseResponseMapperImpl @Inject constructor() : GetCoinBaseResponseToDomainModelMapper {
-    override fun toDomainModel(coinResponse: GetCoinResponse): CoinDomainModel {
+    override fun toDomainModel(coinResponse: GetCoinResponse,
+                               getInfoResponse: GetInfoResponse?): CoinDomainModel {
         return CoinDomainModel(
             id = coinResponse.id,
+            logo = getInfoResponse?.logo ?: "error",
             name = coinResponse.name,
             symbol = coinResponse.symbol,
             priceByUsd = coinResponse.quote.price,
