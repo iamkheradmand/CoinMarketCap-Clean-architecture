@@ -14,8 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SplashViewModel @Inject constructor (val getCoinsListUseCase: GetCoinsListUseCase) : ViewModel() {
 
-    fun getCoinsList() = liveData(Dispatchers.IO) {
-        getCoinsListUseCase.getCoinsList().collect {
+    fun getCoinsList(page : Int) = liveData(Dispatchers.IO) {
+        getCoinsListUseCase.getCoinsList(page).collect {
             emit(it)
         }
     }

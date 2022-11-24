@@ -11,7 +11,7 @@
     <TextView
         android:id="@+id/symbol"
         android:layout_width="match_parent"
-        android:layout_height="130dp"
+        android:layout_height="@dimen/dimen_80"
         android:background="@color/background"
         android:fontFamily="@font/yekan_regular"
         android:gravity="center"
@@ -30,8 +30,8 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="5dp"
         android:background="@drawable/bg_8_blue"
-        android:drawablePadding="15dp"
-        android:gravity="start|center_vertical"
+        android:gravity="center"
+        android:paddingEnd="20dp"
         android:paddingStart="15dp"
         android:text="@string/sort_by"
         android:textColor="@color/white"
@@ -49,8 +49,8 @@
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
         android:background="@drawable/bg_8_blue"
-        android:drawablePadding="15dp"
-        android:gravity="start|center_vertical"
+        android:gravity="center"
+        android:paddingEnd="20dp"
         android:paddingStart="15dp"
         android:text="@string/filter"
         android:textColor="@color/white"
@@ -62,13 +62,13 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginStart="15dp"
         android:layout_marginTop="15dp"
         android:layout_marginEnd="15dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/sort_btn" />
-
 
     <ProgressBar
         android:id="@+id/progressBar"

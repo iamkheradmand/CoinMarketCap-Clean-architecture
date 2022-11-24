@@ -1,12 +1,12 @@
 package com.example.coinmarketcap.ui.adapter
 
 import android.content.Context
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.AppCompatImageView
+import androidx.recyclerview.widget.AsyncListDiffer
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.example.coinmarketcap.databinding.AdapterCoinsListBinding
 import com.example.coinmarketcap.databinding.AdapterLoadingBinding
@@ -26,6 +26,7 @@ class CoinsListAdapter constructor(
     val itemListener: ItemListener?
 ) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
 
     private var arrayList = ArrayList<CoinDomainModel?>()
     private var itemOnClickListener: CoinsListAdapter.ItemOnClickListener? = null
@@ -69,7 +70,6 @@ class CoinsListAdapter constructor(
     fun updateItems(list: ArrayList<CoinDomainModel>) {
         setLoaded()
         arrayList.addAll(list)
-
         if (arrayList.size == totalItemCount) {
             itemListener?.isEndOfList()
         }
@@ -80,6 +80,7 @@ class CoinsListAdapter constructor(
     fun setLoaded() {
         for (i in 0 until itemCount) {
             if (arrayList[i] == null) {
+                Log.e("updateItems", "setLoaded")
                 arrayList.removeAt(i)
                 notifyItemRemoved(i)
             }

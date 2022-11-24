@@ -17,7 +17,7 @@ interface ApiService {
     @Headers("Accept: application/json", "X-CMC_PRO_API_KEY: ${Constants.API_KEY}")
     suspend fun getCoinsList(
         @Query("start") page: Int = 1,
-        @Query("limit") limit: Int? = 20,
+        @Query("limit") limit: Int? = Constants.PAGE_SIZE,
         @Query("sort") sort: String? = null,
         @Query("sort_dir") sort_dir: String? = null,
         @Query("percent_change_24h_min") percent_change_24h_min: Long? = null,

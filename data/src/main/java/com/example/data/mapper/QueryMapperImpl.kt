@@ -13,24 +13,24 @@ import javax.inject.Inject
  */
 
 interface SortFilterToQueryMapper {
-    fun toQueryModel(pageN: Int, sortModel: SortModel, filterModel: FilterModel): QueryModel
+    fun toQueryModel(pageN: Int, sortModel: SortModel?, filterModel: FilterModel?): QueryModel
 }
 
 class QueryMapperImpl @Inject constructor() : SortFilterToQueryMapper {
 
     override fun toQueryModel(
         pageN: Int,
-        sortModel: SortModel,
-        filterModel: FilterModel
+        sortModel: SortModel?,
+        filterModel: FilterModel?
     ): QueryModel {
         return QueryModel(
             page = pageN,
-            sort = sortModel.sort,
-            sort_dir = sortModel.sort_dir,
-            percent_change_24_min = filterModel.percent_change_24_min,
-            percent_change_24_max = filterModel.percent_change_24_max,
-            volume_24_min = filterModel.volume_24_min,
-            volume_24_max = filterModel.volume_24_max,
+            sort = sortModel?.sort,
+            sort_dir = sortModel?.sort_dir,
+            percent_change_24_min = filterModel?.percent_change_24_min,
+            percent_change_24_max = filterModel?.percent_change_24_max,
+            volume_24_min = filterModel?.volume_24_min,
+            volume_24_max = filterModel?.volume_24_max,
         )
     }
 }

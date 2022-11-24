@@ -14,6 +14,9 @@ interface CoinDao {
     @Query("SELECT * FROM coin_info")
     fun getAll(): Flow<List<CoinInfoEntity>>
 
+    @Query("SELECT * FROM coin_info LIMIT :limit OFFSET :offset")
+    fun getByPage(limit: Int, offset: Int): Flow<List<CoinInfoEntity>>
+
     @Insert
     suspend fun insert(coinInfoEntity: CoinInfoEntity): Long
 

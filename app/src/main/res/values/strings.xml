@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">CoinMarketCap</string>
-    <string name="sort_by">Sort by</string>
     <string name="filter">Filter</string>
+    <string name="sort_by">Sort by</string>
+    <string name="percent_change_24h">Percent change 24h</string>
+    <string name="volume">Volume</string>
 </resources>

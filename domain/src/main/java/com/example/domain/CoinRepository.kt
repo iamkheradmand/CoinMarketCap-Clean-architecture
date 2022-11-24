@@ -9,11 +9,13 @@ import kotlinx.coroutines.flow.Flow
 
 interface CoinRepository {
 
-    suspend fun getCoinsList(): Flow<ApiResult<List<CoinDomainModel>>>
+    suspend fun getCoinsList(page: Int): Flow<ApiResult<List<CoinDomainModel>>>
 
     suspend fun getCoinsListLocal(): Flow<List<CoinDomainModel>>
 
+    suspend fun getFromRoomByPage(page: Int): Flow<List<CoinDomainModel>>
+
     suspend fun getInfo(id: Long): Flow<ApiResult<InfoDomainModel>>
 
-    suspend fun getCoinsListByQuery(page : Int, sortModel: SortModel, filterModel: FilterModel): Flow<ApiResult<List<CoinDomainModel>>>
+    suspend fun getCoinsListByQuery(page : Int, sortModel: SortModel?, filterModel: FilterModel?): Flow<ApiResult<List<CoinDomainModel>>>
 }

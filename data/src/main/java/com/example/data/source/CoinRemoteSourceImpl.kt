@@ -14,8 +14,8 @@ import javax.inject.Inject
 class CoinRemoteSourceImpl @Inject constructor(private val apiService: ApiService) :
     CoinRemoteSource {
 
-    override suspend fun getCoinsList(): GetCoinBaseResponse {
-        return apiService.getCoinsList()
+    override suspend fun getCoinsList(page: Int): GetCoinBaseResponse {
+        return apiService.getCoinsList(page = page)
     }
 
     override suspend fun getCoinsByQuery(queryModel: QueryModel): GetCoinBaseResponse {

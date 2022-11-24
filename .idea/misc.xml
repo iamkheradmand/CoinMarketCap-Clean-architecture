@@ -9,6 +9,8 @@
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/activity_main.xml" value="0.12360688956433637" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/adapter_coins_list.xml" value="0.14583333333333334" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/adapter_loading.xml" value="0.14583333333333334" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/bottomsheet_filter.xml" value="0.176" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/bottomsheet_sort.xml" value="0.264" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/fragment_home.xml" value="0.176" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/fragment_splash.xml" value="0.17300724637681159" />
       </map>
