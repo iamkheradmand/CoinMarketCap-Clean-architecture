@@ -10,7 +10,7 @@ import okhttp3.ResponseBody
 
 interface CoinRemoteSource {
 
-    suspend fun getCoinsList(page: Int) : GetCoinBaseResponse
+    suspend fun getCoinsList(start: Int) : GetCoinBaseResponse
 
     suspend fun getCoinsByQuery(queryModel: QueryModel) : GetCoinBaseResponse
 

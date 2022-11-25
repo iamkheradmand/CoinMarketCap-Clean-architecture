@@ -10,6 +10,7 @@ import com.example.data.mapper.SortFilterToQueryMapper
 import com.example.data.model.local.CoinInfoEntity
 import com.example.data.model.remote.GetInfoResponse
 import com.example.data.utils.Constants
+import com.example.data.utils.RepositoryHelper
 import com.example.data.utils.Utils
 import com.example.domain.CoinRepository
 import com.example.domain.entities.*
@@ -27,14 +28,16 @@ class CoinRepositoryImpl @Inject constructor(
     private val remoteSource: CoinRemoteSource,
     private val coinBaseResponseMapper: GetCoinBaseResponseToDomainModelMapper,
     private val infoResponseMapper: GetInfoResponseToDomainModelMapper,
-    private val sortFilterToQueryMapper: SortFilterToQueryMapper
+    private val sortFilterToQueryMapper: SortFilterToQueryMapper,
+    private val repositoryHelper: RepositoryHelper
 ) : CoinRepository {
 
     override suspend fun getCoinsList(page: Int): Flow<ApiResult<List<CoinDomainModel>>> =
         flow {
-            Log.e("CoinRepositoryImpl", "getCoinsList called")
+//            Log.e("CoinRepositoryImpl", "getCoinsList called")
             try {
-                val result = remoteSource.getCoinsList(page).data.map { coinResponseModel ->
+                val start = repositoryHelper.calculateOffsetRemote(page)
+                val result = remoteSource.getCoinsList(start).data.map { coinResponseModel ->
 //                    Log.e("CoinRepositoryImpl", "map = " + coinResponseModel.name)
                     val infoResult = remoteSource.getInfo(coinResponseModel.id)
                     val mainJSONObj = JSONObject(infoResult.string()).getJSONObject("data")
@@ -51,17 +54,18 @@ class CoinRepositoryImpl @Inject constructor(
                         coinSymbol = it.symbol,
                         coinPriceByUsd = it.priceByUsd,
                         coinPercent_change_24hByUSD = it.percent_change_24hByUSD,
-                        coinMarketCap = it.market_cap ?: " "
+                        coinMarketCap = it.market_cap ?: 0.0,
+                        cmc_rank = it.cmc_rank
                     )
                 }
 
                 coinLocalSource.insertAllCoins(coinsList)
 
-                Log.e("CoinRepositoryImpl", "coinLocalSource database updated")
+//                Log.e("CoinRepositoryImpl", "coinLocalSource database updated")
 
                 emit(ApiResult.Success(result))
             } catch (e: Exception) {
-                Log.e("CoinRepositoryImpl", e.toString())
+//                Log.e("CoinRepositoryImpl", e.toString())
                 emit(ApiResult.Failure(e.toString()))
             }
 
@@ -79,7 +83,8 @@ class CoinRepositoryImpl @Inject constructor(
                         symbol = coinInfoEntity.coinSymbol,
                         priceByUsd = coinInfoEntity.coinPriceByUsd,
                         percent_change_24hByUSD = coinInfoEntity.coinPercent_change_24hByUSD,
-                        market_cap = coinInfoEntity.coinMarketCap
+                        market_cap = coinInfoEntity.coinMarketCap,
+                        cmc_rank = coinInfoEntity.cmc_rank
                     )
                 }
             }.flowOn(Dispatchers.IO)
@@ -101,7 +106,8 @@ class CoinRepositoryImpl @Inject constructor(
                         symbol = coinInfoEntity.coinSymbol,
                         priceByUsd = coinInfoEntity.coinPriceByUsd,
                         percent_change_24hByUSD = coinInfoEntity.coinPercent_change_24hByUSD,
-                        market_cap = coinInfoEntity.coinMarketCap
+                        market_cap = coinInfoEntity.coinMarketCap,
+                        cmc_rank = coinInfoEntity.cmc_rank
                     )
                 }
             }.flowOn(Dispatchers.IO)
@@ -119,7 +125,7 @@ class CoinRepositoryImpl @Inject constructor(
                 val result = infoResponseMapper.toDomainModel(getInfoModel)
                 emit(ApiResult.Success(result))
             } catch (e: Exception) {
-                Log.e("CoinRepositoryImpl", " getInfo = " + e.toString())
+//                Log.e("CoinRepositoryImpl", " getInfo = " + e.toString())
                 emit(ApiResult.Failure(e.toString()))
             }
 
@@ -138,7 +144,8 @@ class CoinRepositoryImpl @Inject constructor(
                     "getCoinsListByQuery",
                     "filterModel: " + filterModel!!.volume_24_min + " = " + filterModel!!.percent_change_24_max
                 )
-                val queryModel = sortFilterToQueryMapper.toQueryModel(page, sortModel, filterModel)
+                val start = repositoryHelper.calculateOffsetRemote(page)
+                val queryModel = sortFilterToQueryMapper.toQueryModel(start, sortModel, filterModel)
                 Log.e("getCoinsListByQuery", "queryModel " + queryModel.volume_24_min)
 
                 val data = remoteSource.getCoinsByQuery(queryModel).data

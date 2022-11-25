@@ -8,6 +8,8 @@ import com.example.data.mapper.*
 import com.example.data.repository.CoinRepositoryImpl
 import com.example.data.source.CoinLocalSourceImpl
 import com.example.data.source.CoinRemoteSourceImpl
+import com.example.data.utils.RepositoryHelper
+import com.example.data.utils.RepositoryHelperImpl
 import com.example.domain.CoinRepository
 import dagger.Module
 import dagger.Provides
@@ -48,17 +50,23 @@ object CoinRepositoryModule {
 
     @Provides
     @Singleton
+    fun provideRepositoryHelper(): RepositoryHelper = RepositoryHelperImpl()
+
+    @Provides
+    @Singleton
     fun provideCoinRepository(
         coinLocalSource: CoinLocalSource,
         remoteSource: CoinRemoteSource,
         coinBaseResponseMapper: GetCoinBaseResponseToDomainModelMapper,
         infoResponseToDomainModelMapper: GetInfoResponseToDomainModelMapper,
         sortFilterToQueryMapper: SortFilterToQueryMapper,
+        repositoryHelper: RepositoryHelper
     ): CoinRepository = CoinRepositoryImpl(
         coinLocalSource,
         remoteSource,
         coinBaseResponseMapper,
         infoResponseToDomainModelMapper,
-        sortFilterToQueryMapper
+        sortFilterToQueryMapper,
+        repositoryHelper
     )
 }

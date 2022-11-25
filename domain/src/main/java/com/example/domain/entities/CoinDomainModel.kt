@@ -11,5 +11,6 @@ data class CoinDomainModel(
     val symbol : String,
     val priceByUsd : Double,
     val percent_change_24hByUSD : Double,
-    val market_cap : String ?= null
+    val market_cap : Double ?= null,
+    val cmc_rank : Long
 )

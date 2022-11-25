@@ -23,15 +23,6 @@ data class GetInfoResponse(
     @SerializedName("description")
     @Expose
     val description: String,
-    @SerializedName("date_added")
-    @Expose
-    val date_added: String,
-    @SerializedName("date_launched")
-    @Expose
-    val date_launched: String,
-    @SerializedName("slug")
-    @Expose
-    val slug: String,
     @SerializedName("urls")
     @Expose
     val urls: UrlsResponseModel,

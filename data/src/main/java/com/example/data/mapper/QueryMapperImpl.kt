@@ -1,11 +1,8 @@
 package com.example.data.mapper
 
-import com.example.data.model.remote.GetInfoResponse
 import com.example.data.model.remote.QueryModel
 import com.example.domain.entities.FilterModel
-import com.example.domain.entities.InfoDomainModel
 import com.example.domain.entities.SortModel
-import retrofit2.http.Query
 import javax.inject.Inject
 
 /**
@@ -13,18 +10,18 @@ import javax.inject.Inject
  */
 
 interface SortFilterToQueryMapper {
-    fun toQueryModel(pageN: Int, sortModel: SortModel?, filterModel: FilterModel?): QueryModel
+    fun toQueryModel(start: Int, sortModel: SortModel?, filterModel: FilterModel?): QueryModel
 }
 
 class QueryMapperImpl @Inject constructor() : SortFilterToQueryMapper {
 
     override fun toQueryModel(
-        pageN: Int,
+        start: Int,
         sortModel: SortModel?,
         filterModel: FilterModel?
     ): QueryModel {
         return QueryModel(
-            page = pageN,
+            start = start,
             sort = sortModel?.sort,
             sort_dir = sortModel?.sort_dir,
             percent_change_24_min = filterModel?.percent_change_24_min,

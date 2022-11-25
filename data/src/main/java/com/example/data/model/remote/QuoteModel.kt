@@ -24,5 +24,5 @@ data class USDModel(
     val percentChange24h: Double,
     @SerializedName("market_cap")
     @Expose
-    val marketCap: String ?= null,
+    val marketCap: Double ?= null,
 )

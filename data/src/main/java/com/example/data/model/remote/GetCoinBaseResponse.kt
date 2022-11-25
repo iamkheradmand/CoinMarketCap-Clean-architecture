@@ -23,6 +23,9 @@ data class GetCoinResponse(
     @SerializedName("symbol")
     @Expose
     val symbol: String,
+    @SerializedName("cmc_rank")
+    @Expose
+    val cmc_rank: Long,
     @SerializedName("quote")
     @Expose
     val quote: QuoteModel

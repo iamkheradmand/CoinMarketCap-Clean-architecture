@@ -5,7 +5,7 @@ package com.example.data.model.remote
  */
 
 data class QueryModel(
-    val page: Int = 1,
+    val start: Int = 1,
     val sort: String? = null,
     val sort_dir: String? = null,
     val percent_change_24_min: Long? = null,

@@ -16,5 +16,6 @@ data class CoinInfoEntity(
     @ColumnInfo(name = "coin_symbol") val coinSymbol: String,
     @ColumnInfo(name = "coin_priceByUsd") val coinPriceByUsd: Double,
     @ColumnInfo(name = "coin_percent_change_24hByUSD") val coinPercent_change_24hByUSD: Double,
-    @ColumnInfo(name = "coin_market_cap") val coinMarketCap: String,
+    @ColumnInfo(name = "coin_market_cap") val coinMarketCap: Double,
+    @ColumnInfo(name = "cmc_rank") val cmc_rank: Long
 )

@@ -91,8 +91,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
 
     override fun initViews() {
         initRecyclerView()
-        getCoinsListRemote(++pageNumber)
-//        getCoinsListLocal(++pageNumber)
+//        getCoinsListRemote(++pageNumber)
+        getCoinsListLocal(++pageNumber)
     }
 
     private fun getCoinsListLocal(pageNumber: Int) {
@@ -212,13 +212,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
 
     fun refreshLayout() {
         Log.e("HomeFragment", "refreshLayout")
-//        getCoinsListLocal(++pageNumber)
-        if (coinsListAdapter!!.hasItem()) {
-            getCoinsListRemote(++pageNumber)
-        } else {
-            resetPageNumber()
-            getCoinsListRemote(++pageNumber)
-        }
+        getCoinsListLocal(++pageNumber)
+//        if (coinsListAdapter!!.hasItem()) {
+//            getCoinsListRemote(++pageNumber)
+//        } else {
+//            resetPageNumber()
+//            getCoinsListRemote(++pageNumber)
+//        }
     }
 
     private fun resetPageNumber() {

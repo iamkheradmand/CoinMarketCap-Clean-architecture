@@ -23,7 +23,8 @@ class GetCoinBaseResponseMapperImpl @Inject constructor() : GetCoinBaseResponseT
             symbol = coinResponse.symbol,
             priceByUsd = coinResponse.quote.usd.price,
             percent_change_24hByUSD = coinResponse.quote.usd.percentChange24h,
-            market_cap = coinResponse.quote.usd.marketCap
+            market_cap = coinResponse.quote.usd.marketCap,
+            cmc_rank = coinResponse.cmc_rank
         )
     }
 }
