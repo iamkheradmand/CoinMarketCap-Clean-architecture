@@ -6,17 +6,6 @@
 
 
     <fragment
-        android:id="@+id/splashFragment"
-        android:name="com.example.coinmarketcap.ui.fragment.SplashFragment"
-        android:label="splashFragment">
-
-<!--        <action-->
-<!--            android:id="@+id/action_splashFragment_to_loginFragment"-->
-<!--            app:destination="@id/login_nav_graph" />-->
-
-    </fragment>
-
-    <fragment
         android:id="@+id/homeFragment"
         android:name="com.example.coinmarketcap.ui.fragment.HomeFragment"
         android:label="homeFragment">

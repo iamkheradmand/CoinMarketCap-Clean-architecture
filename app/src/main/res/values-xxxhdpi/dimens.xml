@@ -11,5 +11,6 @@
     <dimen name="txt_15">15sp</dimen>
     <dimen name="txt_20">20sp</dimen>
     <dimen name="txt_24">24sp</dimen>
+    <dimen name="item_height">100dp</dimen>
 
 </resources>

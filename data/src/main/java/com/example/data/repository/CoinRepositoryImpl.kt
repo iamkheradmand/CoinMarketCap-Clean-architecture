@@ -45,9 +45,10 @@ class CoinRepositoryImpl @Inject constructor(
             }
 
             if (page == 1) coinLocalSource.deleteAll()
-            delay(300)
+//            delay(300)
             //update Database
             val coinsList = result.map { coinInfoEntityEntityMapper.toEntityModel(it) }
+            Log.e("HomeFragment", "insertAllCoins")
             coinLocalSource.insertAllCoins(coinsList)
         } catch (e: Exception) {
             Log.e("CoinRepositoryImpl", "updateDatabaseFromServer Exception $e")

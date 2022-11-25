@@ -74,9 +74,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
 
     override fun initViews() {
         showLoading()
-        databaseSizeChangeListener()
+//        databaseSizeChangeListener()
         initRecyclerView()
-        getCoinsListLocal(++pageNumber)
+//        getCoinsListLocal()
+        getCoinsListRemote()
         hasConnection()
     }
 
@@ -141,32 +142,40 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
         }
     }
 
-    private fun getCoinsListLocal(pageNumber: Int) {
-        Log.e("getCoinsListLocal", "pageNumber  : " + pageNumber )
-        viewModel.getFromRoomByPage(pageNumber).observe(viewLifecycleOwner, { result ->
-            dismissLoading()
-            result?.let {
-                Log.e("getCoinsListLocal", "getCoinsListRemote  : " + result.size )
-                coinsListAdapter?.updateItems(result as ArrayList<CoinDomainModel>)
-            }
-        })
-    }
 
-    private fun getCoinsListRemote(pageNumber: Int) {
-        viewModel.getCoinsListByQuery(pageNumber, sortModel, filterModel)
-            .observe(viewLifecycleOwner, { result ->
-                when (result) {
-                    is ApiResult.Success -> {
-                        dismissLoading()
-                        coinsListAdapter?.updateItems(result.data as ArrayList<CoinDomainModel>)
-                    }
 
-                    is ApiResult.Failure -> {
-                        dismissLoading()
-                        Utils.showToast(requireContext(), result.message ?: "error")
+    private fun getCoinsListRemote() {
+        if (queryMode)
+            viewModel.getCoinsListByQuery(++pageNumber, sortModel, filterModel)
+                .observe(viewLifecycleOwner, { result ->
+                    when (result) {
+                        is ApiResult.Success -> {
+                            dismissLoading()
+                            coinsListAdapter?.updateItems(result.data as ArrayList<CoinDomainModel>)
+                        }
+
+                        is ApiResult.Failure -> {
+                            dismissLoading()
+                            Utils.showToast(requireContext(), result.message ?: "error")
+                        }
                     }
-                }
-            })
+                })
+        else
+            viewModel.getCoinsList(++pageNumber)
+                .observe(viewLifecycleOwner, { result ->
+                    when (result) {
+                        is ApiResult.Success -> {
+                            dismissLoading()
+                            coinsListAdapter?.updateItems(result.data as ArrayList<CoinDomainModel>)
+                        }
+
+                        is ApiResult.Failure -> {
+                            dismissLoading()
+                            coinsListAdapter?.setLoaded()
+                            Utils.showToast(requireContext(), result.message ?: "error")
+                        }
+                    }
+                })
     }
 
     /*
@@ -175,8 +184,27 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     * */
     private fun databaseSizeChangeListener() {
         viewModel.getDatabaseSize().observe(viewLifecycleOwner, { size ->
-            if (size == 0 && !loading)
-                reset()
+            Log.d("HomeFragment", "database size = $size ")
+            if (size == 0) {
+                pageNumber = 1
+                clearAdapter()
+                showLoading()
+            }
+        })
+    }
+
+    private fun getCoinsListLocal() {
+        viewModel.getFromRoomByPage(++pageNumber).observe(viewLifecycleOwner, { result ->
+            Log.d("HomeFragment", "getCoinsListLocal page = $pageNumber result = ${result.size} ")
+            if (hasConnection() && result.isEmpty() && loading) {
+                viewModel.requestUpdateDatabase(pageNumber)
+            } else {
+                dismissLoading()
+                coinsListAdapter?.updateItems(result as ArrayList<CoinDomainModel>)
+            }
+//            this.pageNumber = pageNumber
+//            if (result.isEmpty())
+//                --this.pageNumber
         })
     }
 
@@ -187,7 +215,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     private fun applyFilter() {
         queryMode = true
         reset()
-        getCoinsListRemote(++pageNumber)
+        getCoinsListRemote()
     }
 
 
@@ -196,14 +224,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     }
 
     fun refreshLayout() {
-        if (queryMode) {
-            getCoinsListRemote(++pageNumber)
-        } else
-            getCoinsListLocal(++pageNumber)
+        Log.d("HomeFragment", "refreshLayout: $pageNumber")
+        getCoinsListRemote()
+
+//        if (queryMode) {
+//            getCoinsListRemote()
+//        } else
+//            getCoinsListLocal()
     }
 
     private fun reset() {
-        Log.e("getCoinsListLocal", "reset")
+        Log.d("HomeFragment", "reset: ")
         resetPageNumber()
         clearAdapter()
         showLoading()
@@ -211,7 +242,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
 
     private fun resetPageNumber() {
         pageNumber = 0
-        Log.e("getCoinsListLocal", "resetPageNumber  $pageNumber")
+        Log.d("HomeFragment", "resetPageNumber = $pageNumber ")
+
     }
 
     private fun showLoading() {

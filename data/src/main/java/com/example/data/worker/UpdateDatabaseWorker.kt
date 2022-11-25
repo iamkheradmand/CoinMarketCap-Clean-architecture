@@ -33,12 +33,13 @@ class UpdateDatabaseWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         return try {
-            Log.e(TAG, "doWorke")
-            val result = repository.clearDatabase()
-            Log.e(TAG, "Result.success()")
+            Log.d(TAG, "doWorke")
+            val result = repository.updateDatabaseFromServer(1)
+//            val result = repository.clearDatabase()
+            Log.d(TAG, "Result.success()")
             Result.success()
         } catch (e: Exception) {
-            Log.e(TAG, "Error seeding database", e)
+            Log.d(TAG, "Error seeding database", e)
             Result.failure()
         }
     }
