@@ -35,30 +35,41 @@ class CoinsListAdapter constructor(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
             ItemViewType.LOADING -> {
-                val binding = AdapterLoadingBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                val binding = AdapterLoadingBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
                 LoadingViewHolder(binding)
             }
-            else  -> {
-                val binding = AdapterCoinsListBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            else -> {
+                val binding = AdapterCoinsListBinding.inflate(
+                    LayoutInflater.from(parent.context),
+                    parent,
+                    false
+                )
                 ViewHolder(binding)
             }
         }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        when(holder){
-            is ViewHolder ->{
+        when (holder) {
+            is ViewHolder -> {
                 val model = arrayList[position]
                 model?.let {
                     holder.binding.symbol.text = it.symbol
                     holder.binding.name.text = it.name
+                    holder.binding.percentChange.text =
+                        "Percent change : ${it.percent_change_24hByUSD} %"
+                    holder.binding.marketCap.text = "Market cap : ${it.market_cap}"
                     holder.binding.price.text = "${it.priceByUsd} $"
                     picasso.load(it.logo)
                         .into(holder.binding.logo)
                 }
             }
 
-            is LoadingViewHolder ->{
+            is LoadingViewHolder -> {
                 val loadingViewHolder: LoadingViewHolder = holder
                 loadingViewHolder.binding.progressBar.isIndeterminate = true
             }
@@ -70,17 +81,18 @@ class CoinsListAdapter constructor(
     fun updateItems(list: ArrayList<CoinDomainModel>) {
         setLoaded()
         arrayList.addAll(list)
-        if (arrayList.size == totalItemCount) {
-            itemListener?.isEndOfList()
-        }
         notifyDataSetChanged()
+
+//        if (arrayList.size == totalItemCount) {
+//            itemListener?.isEndOfList()
+//        }
+
     }
 
 
     fun setLoaded() {
         for (i in 0 until itemCount) {
             if (arrayList[i] == null) {
-                Log.e("updateItems", "setLoaded")
                 arrayList.removeAt(i)
                 notifyItemRemoved(i)
             }

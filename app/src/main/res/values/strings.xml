@@ -1,7 +1,17 @@
 <resources>
     <string name="app_name">CoinMarketCap</string>
+
+    <string name="err_no_connection">No internet Connection</string>
+
     <string name="filter">Filter</string>
     <string name="sort_by">Sort by</string>
     <string name="percent_change_24h">Percent change 24h</string>
     <string name="volume">Volume</string>
+    <string name="name">Name</string>
+    <string name="ascending">Ascending</string>
+    <string name="descending">Descending</string>
+    <string name="circulating_supply">Circulating Supply</string>
+    <string name="market_cap">Market cap</string>
+    <string name="price">Price</string>
+    <string name="sort">Sort</string>
 </resources>

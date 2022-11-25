@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.example.data.ApiService
 import com.example.data.datasource.CoinLocalSource
 import com.example.data.datasource.CoinRemoteSource
+import com.example.data.mapper.CoinInfoEntityEntityMapper
 import com.example.data.mapper.GetCoinBaseResponseToDomainModelMapper
 import com.example.data.mapper.GetInfoResponseToDomainModelMapper
 import com.example.data.mapper.SortFilterToQueryMapper
@@ -53,6 +54,9 @@ class CoinRepositoryImplTest {
     @Inject
     lateinit var repositoryHelper: RepositoryHelper
 
+    @Inject
+    lateinit var  coinInfoEntityEntityMapper: CoinInfoEntityEntityMapper
+
     private lateinit var coinRepositoryImpl: CoinRepositoryImpl
     private lateinit var mockService: ApiService
 
@@ -81,6 +85,7 @@ class CoinRepositoryImplTest {
         infoResponseMapper = mockk()
         sortFilterToQueryMapper = mockk()
         repositoryHelper = mockk()
+        coinInfoEntityEntityMapper = mockk()
 
         coinRepositoryImpl =
             CoinRepositoryImpl(
@@ -89,6 +94,7 @@ class CoinRepositoryImplTest {
                 coinBaseResponseMapper,
                 infoResponseMapper,
                 sortFilterToQueryMapper,
+                coinInfoEntityEntityMapper,
                 repositoryHelper
             )
     }

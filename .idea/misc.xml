@@ -7,12 +7,15 @@
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/drawable/ic_filter_list.xml" value="0.17777777777777778" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/drawable/ic_sort.xml" value="0.17777777777777778" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/activity_main.xml" value="0.12360688956433637" />
-        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/adapter_coins_list.xml" value="0.14583333333333334" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/adapter_coins_list.xml" value="0.2" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/adapter_loading.xml" value="0.14583333333333334" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/bottomsheet_filter.xml" value="0.176" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/bottomsheet_info.xml" value="0.25416666666666665" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/bottomsheet_sort.xml" value="0.264" />
-        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/fragment_home.xml" value="0.176" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/fragment_home.xml" value="0.2" />
         <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/layout/fragment_splash.xml" value="0.17300724637681159" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.25092592592592594" />
+        <entry key="..\:/Android Projects/DigipayCodeChallenge/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.25092592592592594" />
       </map>
     </option>
   </component>

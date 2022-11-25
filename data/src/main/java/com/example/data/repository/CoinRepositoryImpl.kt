@@ -3,11 +3,11 @@ package com.example.data.repository
 import android.util.Log
 import com.example.data.datasource.CoinLocalSource
 import com.example.data.datasource.CoinRemoteSource
-import com.example.data.db.AppDatabase
+import com.example.data.mapper.CoinInfoEntityEntityMapper
 import com.example.data.mapper.GetCoinBaseResponseToDomainModelMapper
 import com.example.data.mapper.GetInfoResponseToDomainModelMapper
 import com.example.data.mapper.SortFilterToQueryMapper
-import com.example.data.model.local.CoinInfoEntity
+import com.example.data.model.remote.GetCoinResponse
 import com.example.data.model.remote.GetInfoResponse
 import com.example.data.utils.Constants
 import com.example.data.utils.RepositoryHelper
@@ -15,6 +15,7 @@ import com.example.data.utils.Utils
 import com.example.domain.CoinRepository
 import com.example.domain.entities.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import org.json.JSONObject
 import javax.inject.Inject
@@ -29,63 +30,58 @@ class CoinRepositoryImpl @Inject constructor(
     private val coinBaseResponseMapper: GetCoinBaseResponseToDomainModelMapper,
     private val infoResponseMapper: GetInfoResponseToDomainModelMapper,
     private val sortFilterToQueryMapper: SortFilterToQueryMapper,
+    private val coinInfoEntityEntityMapper: CoinInfoEntityEntityMapper,
     private val repositoryHelper: RepositoryHelper
 ) : CoinRepository {
 
-    override suspend fun getCoinsList(page: Int): Flow<ApiResult<List<CoinDomainModel>>> =
+    override suspend fun getDatabaseRowCount(): Flow<Int> =
+        coinLocalSource.getRowCount()
+
+    override suspend fun updateDatabaseFromServer(page: Int) {
+        try {
+            val start = repositoryHelper.calculateOffsetRemote(page)
+            val result = remoteSource.getCoinsList(start).data.map { coinResponseModel ->
+                getCoinInfoMapToDomainModel(coinResponseModel)
+            }
+
+            if (page == 1) coinLocalSource.deleteAll()
+            delay(300)
+            //update Database
+            val coinsList = result.map { coinInfoEntityEntityMapper.toEntityModel(it) }
+            coinLocalSource.insertAllCoins(coinsList)
+        } catch (e: Exception) {
+            Log.e("CoinRepositoryImpl", "updateDatabaseFromServer Exception $e")
+        }
+    }
+
+    override suspend fun getCoinsListByFlow(page: Int): Flow<ApiResult<List<CoinDomainModel>>> =
         flow {
-//            Log.e("CoinRepositoryImpl", "getCoinsList called")
             try {
                 val start = repositoryHelper.calculateOffsetRemote(page)
                 val result = remoteSource.getCoinsList(start).data.map { coinResponseModel ->
-//                    Log.e("CoinRepositoryImpl", "map = " + coinResponseModel.name)
-                    val infoResult = remoteSource.getInfo(coinResponseModel.id)
-                    val mainJSONObj = JSONObject(infoResult.string()).getJSONObject("data")
-                    val dataObject = mainJSONObj.getJSONObject("${coinResponseModel.id}").toString()
-                    val getInfoModel = Utils.jsonConverter(dataObject, GetInfoResponse::class.java)
-                    coinBaseResponseMapper.toDomainModel(coinResponseModel, getInfoModel)
+                    getCoinInfoMapToDomainModel(coinResponseModel)
                 }
-
-                val coinsList = result.map {
-                    CoinInfoEntity(
-                        coinId = it.id,
-                        coinLogo = it.logo,
-                        coinName = it.name,
-                        coinSymbol = it.symbol,
-                        coinPriceByUsd = it.priceByUsd,
-                        coinPercent_change_24hByUSD = it.percent_change_24hByUSD,
-                        coinMarketCap = it.market_cap ?: 0.0,
-                        cmc_rank = it.cmc_rank
-                    )
-                }
-
-                coinLocalSource.insertAllCoins(coinsList)
-
-//                Log.e("CoinRepositoryImpl", "coinLocalSource database updated")
-
                 emit(ApiResult.Success(result))
             } catch (e: Exception) {
-//                Log.e("CoinRepositoryImpl", e.toString())
                 emit(ApiResult.Failure(e.toString()))
             }
 
         }.flowOn(Dispatchers.IO)
 
 
+    private suspend fun getCoinInfoMapToDomainModel(coinResponseModel: GetCoinResponse): CoinDomainModel {
+        val infoResult = remoteSource.getInfo(coinResponseModel.id)
+        val mainJSONObj = JSONObject(infoResult.string()).getJSONObject("data")
+        val dataObject = mainJSONObj.getJSONObject("${coinResponseModel.id}").toString()
+        val getInfoModel = Utils.jsonConverter(dataObject, GetInfoResponse::class.java)
+        return coinBaseResponseMapper.toDomainModel(coinResponseModel, getInfoModel)
+    }
+
     override suspend fun getCoinsListLocal(): Flow<List<CoinDomainModel>> {
         return coinLocalSource.getCoinsList()
             .map {
                 it.map { coinInfoEntity ->
-                    CoinDomainModel(
-                        id = coinInfoEntity.coinId,
-                        logo = coinInfoEntity.coinLogo,
-                        name = coinInfoEntity.coinName,
-                        symbol = coinInfoEntity.coinSymbol,
-                        priceByUsd = coinInfoEntity.coinPriceByUsd,
-                        percent_change_24hByUSD = coinInfoEntity.coinPercent_change_24hByUSD,
-                        market_cap = coinInfoEntity.coinMarketCap,
-                        cmc_rank = coinInfoEntity.cmc_rank
-                    )
+                    coinInfoEntityEntityMapper.toCoinDomainModel(coinInfoEntity)
                 }
             }.flowOn(Dispatchers.IO)
 
@@ -94,25 +90,15 @@ class CoinRepositoryImpl @Inject constructor(
     override suspend fun getFromRoomByPage(page: Int): Flow<List<CoinDomainModel>> {
         val limit = page * Constants.PAGE_SIZE
         val offset = limit - Constants.PAGE_SIZE
-        Log.e("HomeFragment", "offset $offset  limit $limit")
-
         return coinLocalSource.getByPage(limit, offset)
             .map {
                 it.map { coinInfoEntity ->
-                    CoinDomainModel(
-                        id = coinInfoEntity.coinId,
-                        logo = coinInfoEntity.coinLogo,
-                        name = coinInfoEntity.coinName,
-                        symbol = coinInfoEntity.coinSymbol,
-                        priceByUsd = coinInfoEntity.coinPriceByUsd,
-                        percent_change_24hByUSD = coinInfoEntity.coinPercent_change_24hByUSD,
-                        market_cap = coinInfoEntity.coinMarketCap,
-                        cmc_rank = coinInfoEntity.cmc_rank
+                    coinInfoEntityEntityMapper.toCoinDomainModel(
+                        coinInfoEntity
                     )
                 }
             }.flowOn(Dispatchers.IO)
     }
-
 
     override suspend fun getInfo(id: Long): Flow<ApiResult<InfoDomainModel>> =
         flow {
@@ -125,7 +111,6 @@ class CoinRepositoryImpl @Inject constructor(
                 val result = infoResponseMapper.toDomainModel(getInfoModel)
                 emit(ApiResult.Success(result))
             } catch (e: Exception) {
-//                Log.e("CoinRepositoryImpl", " getInfo = " + e.toString())
                 emit(ApiResult.Failure(e.toString()))
             }
 
@@ -140,32 +125,19 @@ class CoinRepositoryImpl @Inject constructor(
     ): Flow<ApiResult<List<CoinDomainModel>>> =
         flow {
             try {
-                Log.e(
-                    "getCoinsListByQuery",
-                    "filterModel: " + filterModel!!.volume_24_min + " = " + filterModel!!.percent_change_24_max
-                )
                 val start = repositoryHelper.calculateOffsetRemote(page)
                 val queryModel = sortFilterToQueryMapper.toQueryModel(start, sortModel, filterModel)
-                Log.e("getCoinsListByQuery", "queryModel " + queryModel.volume_24_min)
 
                 val data = remoteSource.getCoinsByQuery(queryModel).data
                 if (data.isNotEmpty()) {
-                    Log.e("getCoinsListByQuery", "isNotEmpty ")
                     val result =
                         remoteSource.getCoinsByQuery(queryModel).data.map { coinResponseModel ->
-
-                            val infoResult = remoteSource.getInfo(coinResponseModel.id)
-                            val mainJSONObj = JSONObject(infoResult.string()).getJSONObject("data")
-                            val dataObject =
-                                mainJSONObj.getJSONObject("${coinResponseModel.id}").toString()
-                            val getInfoModel =
-                                Utils.jsonConverter(dataObject, GetInfoResponse::class.java)
-                            coinBaseResponseMapper.toDomainModel(coinResponseModel, getInfoModel)
+                            getCoinInfoMapToDomainModel(coinResponseModel)
                         }
 
                     emit(ApiResult.Success(result))
                 } else
-                    emit(ApiResult.Failure("empty"))
+                    emit(ApiResult.Failure("To many requests!"))
 
             } catch (e: Exception) {
                 emit(ApiResult.Failure(e.toString()))
@@ -173,5 +145,9 @@ class CoinRepositoryImpl @Inject constructor(
 
         }.flowOn(Dispatchers.IO)
 
+
+    override suspend fun clearDatabase() {
+        coinLocalSource.deleteAll()
+    }
 
 }

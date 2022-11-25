@@ -6,9 +6,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
-import androidx.work.workDataOf
+import androidx.work.*
 import com.example.data.model.local.CoinInfoEntity
 import com.example.data.utils.Constants
 import com.example.data.worker.UpdateDatabaseWorker
@@ -27,7 +25,8 @@ abstract class AppDatabase : RoomDatabase() {
 
         private const val TAG = "AppDatabase"
 
-        @Volatile private var instance: AppDatabase? = null
+        @Volatile
+        private var instance: AppDatabase? = null
 
         fun getInstance(context: Context): AppDatabase {
             return instance ?: synchronized(this) {
@@ -38,19 +37,20 @@ abstract class AppDatabase : RoomDatabase() {
         private fun buildDatabase(context: Context): AppDatabase {
             return Room.databaseBuilder(context, AppDatabase::class.java, Constants.DATABASE_NAME)
                 .addCallback(object : RoomDatabase.Callback() {
-                        override fun onCreate(db: SupportSQLiteDatabase) {
-                            super.onCreate(db)
-
-                        }
 
                     override fun onOpen(db: SupportSQLiteDatabase) {
                         super.onOpen(db)
-                        Log.e(TAG, "onOpen")
+                        val constraints = Constraints
+                            .Builder()
+                            .setRequiredNetworkType(NetworkType.CONNECTED)
+                            .build()
+
                         val request = OneTimeWorkRequestBuilder<UpdateDatabaseWorker>()
+                            .setConstraints(constraints)
                             .build()
                         WorkManager.getInstance(context).enqueue(request)
                     }
-                    }
+                }
                 )
                 .build()
         }

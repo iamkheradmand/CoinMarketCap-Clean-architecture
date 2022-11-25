@@ -10,10 +10,14 @@ import kotlinx.coroutines.flow.Flow
 
 interface CoinLocalSource {
 
+    suspend fun getRowCount() : Flow<Int>
+
     suspend fun getCoinsList() : Flow<List<CoinInfoEntity>>
 
     suspend fun getByPage(limit: Int, offset: Int): Flow<List<CoinInfoEntity>>
 
     suspend fun insertAllCoins(coins: List<CoinInfoEntity>)
+
+    suspend fun deleteAll()
 
 }

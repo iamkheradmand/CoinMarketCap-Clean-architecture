@@ -34,10 +34,7 @@ class UpdateDatabaseWorker @AssistedInject constructor(
     override suspend fun doWork(): Result {
         return try {
             Log.e(TAG, "doWorke")
-//           val result = repository.getCoinsList()
-//            result.collect(){
-//                Log.e(TAG, "Result.collect")
-//            }
+            val result = repository.clearDatabase()
             Log.e(TAG, "Result.success()")
             Result.success()
         } catch (e: Exception) {

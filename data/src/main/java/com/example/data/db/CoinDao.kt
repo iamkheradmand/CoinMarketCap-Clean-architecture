@@ -23,6 +23,9 @@ interface CoinDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(coins: List<CoinInfoEntity>)
 
-    @Delete
-    suspend fun delete(coinInfoEntity: CoinInfoEntity)
+    @Query("DELETE FROM coin_info")
+    suspend fun deleteAll()
+
+    @Query("SELECT COUNT(coin_id) FROM coin_info")
+    fun getRowCount() : Flow<Int>
 }

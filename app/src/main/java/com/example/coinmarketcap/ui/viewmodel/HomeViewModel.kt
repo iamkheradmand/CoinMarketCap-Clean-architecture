@@ -1,12 +1,15 @@
 package com.example.coinmarketcap.ui.viewmodel
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import com.example.data.utils.Utils
 import com.example.domain.entities.FilterModel
 import com.example.domain.entities.SortModel
 import com.example.domain.usecase.GetCoinsListUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.distinctUntilChanged
 import javax.inject.Inject
@@ -16,46 +19,48 @@ import javax.inject.Inject
  */
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(val getCoinsListUseCase: GetCoinsListUseCase) :
-    ViewModel() {
+class HomeViewModel @Inject constructor(
+    @ApplicationContext private val context: Context,
+    val coinsListUseCase: GetCoinsListUseCase
+) : ViewModel() {
 
-    fun getCoinsList(page: Int) = liveData(Dispatchers.IO) {
-        Log.e("HomeViewModel", "getCoinsList: $page", )
-        getCoinsListUseCase.getCoinsList(page).collect {
+    /*
+    * The data is first received from the database. if the database is empty, it receives the data
+    * from the server and updates the database.
+    * */
+    fun getFromRoomByPage(page: Int) = liveData(Dispatchers.IO) {
+        coinsListUseCase
+            .getFromRoomByPage(page)
+            .distinctUntilChanged()
+            .collect {
+                if (it.isEmpty() && !Utils.hasConnection(context))//dismiss paging loading in offline mode
+                    emit(it)
+                else if (it.isNotEmpty())
+                    emit(it)
+                else
+                    coinsListUseCase.updateDatabaseFromServer(page)
+            }
+    }
+
+    fun getDatabaseSize() = liveData(Dispatchers.IO) {
+        coinsListUseCase.getDatabaseSize().collect {
             emit(it)
         }
     }
 
     fun getCoinsListByQuery(page: Int, sortModel: SortModel?, filterModel: FilterModel?) =
         liveData(Dispatchers.IO) {
-            Log.e("HomeViewModel", "getCoinsListByQuery")
-            getCoinsListUseCase.getCoinsListByQuery(
-                page,
-                sortModel,
-                filterModel
+            coinsListUseCase.getCoinsListByQuery(
+                page, sortModel, filterModel
             ).collect {
                 emit(it)
             }
         }
 
-    fun getDB() = liveData(Dispatchers.IO) {
-        getCoinsListUseCase.getCoinsListLocal().collect {
+    fun getCoinsList(page: Int) = liveData(Dispatchers.IO) {
+        coinsListUseCase.getCoinsListByFlow(page).collect {
             emit(it)
         }
-    }
-
-    fun getFromRoomByPage(page: Int) = liveData(Dispatchers.IO) {
-        getCoinsListUseCase
-            .getFromRoomByPage(page)
-            .distinctUntilChanged()
-            .collect {
-                if (it.isNotEmpty())
-                    emit(it)
-                else
-                    getCoinsListUseCase.getCoinsList(page).collect {
-
-                    }
-            }
     }
 
 }

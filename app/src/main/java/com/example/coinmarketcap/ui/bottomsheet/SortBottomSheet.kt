@@ -29,6 +29,9 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class SortBottomSheet : BaseBottomSheetDialogFragment<BottomsheetSortBinding>() {
 
+    private var sortType = SortType.NAME
+    private var sortOrder = SortDirType.ASC
+
     override fun getViewBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -43,23 +46,41 @@ class SortBottomSheet : BaseBottomSheetDialogFragment<BottomsheetSortBinding>() 
     private fun fillInputs(arguments: Bundle?) {
         arguments?.let {
             val sortModel: SortModel = arguments.getParcelable(Constants.EXTRA_MODEL_SORT)!!
-            when (sortModel.sort) {
-                SortType.NAME -> {
-                    binding.nameAsc.isChecked = true
-                }
-                SortType.PRICE -> {
-                    binding.priceAsc.isChecked = true
-                }
-                SortType.NAMARKET_CAPE -> {
-                    binding.marketcapAsc.isChecked = true
-                }
-                SortType.CIRCULATING_SUPPLY -> {
-                    binding.csupplyAsc.isChecked = true
-                }
+            sortModel.sort?.let {
+                when (it) {
+                    SortType.NAME -> {
+                        binding.name.isChecked = true
+                    }
+                    SortType.PRICE -> {
+                        binding.price.isChecked = true
+                    }
+                    SortType.NAMARKET_CAPE -> {
+                        binding.marketcap.isChecked = true
+                    }
+                    SortType.CIRCULATING_SUPPLY -> {
+                        binding.csupply.isChecked = true
+                    }
+                    else -> {
 
-                else -> {
-
+                    }
                 }
+                sortType = it
+            }
+
+            sortModel.sort_dir?.let {
+                when (it) {
+                    SortDirType.ASC -> {
+                        binding.ascending.isChecked = true
+                    }
+                    SortDirType.DESC -> {
+                        binding.descending.isChecked = true
+                    }
+
+                    else -> {
+
+                    }
+                }
+                sortOrder = it
             }
         }
     }
@@ -67,26 +88,48 @@ class SortBottomSheet : BaseBottomSheetDialogFragment<BottomsheetSortBinding>() 
 
     override fun onClickListeners() {
 
-        binding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
-            val sortModel = when (checkedId) {
-                R.id.name_asc -> {
-                    SortModel(SortType.NAME, SortDirType.ASC)
+        binding.sortTypeRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            sortType = when (checkedId) {
+                R.id.name -> {
+                    SortType.NAME
                 }
-                R.id.price_asc -> {
-                    SortModel(SortType.PRICE, SortDirType.ASC)
+                R.id.price -> {
+                    SortType.PRICE
                 }
-                R.id.marketcap_asc -> {
-                    SortModel(SortType.NAMARKET_CAPE, SortDirType.ASC)
+                R.id.marketcap -> {
+                    SortType.NAMARKET_CAPE
                 }
-                R.id.csupply_asc -> {
-                    SortModel(SortType.CIRCULATING_SUPPLY, SortDirType.ASC)
+                R.id.csupply -> {
+                    SortType.CIRCULATING_SUPPLY
                 }
                 else -> {
-                    SortModel(SortType.NAME, SortDirType.ASC)
+                    SortType.NAME
                 }
             }
+        }
 
-            setFragmentResult(Constants.RK_BOTTOMSHEET_RESULT, bundleOf(Constants.EXTRA_MODEL_SORT to sortModel))
+        binding.orderRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            sortOrder = when (checkedId) {
+                R.id.ascending -> {
+                    SortDirType.ASC
+                }
+                R.id.descending -> {
+                    SortDirType.DESC
+                }
+                else -> {
+                    SortDirType.ASC
+                }
+            }
+        }
+
+        binding.sortBtn.setOnClickListener {
+
+            Log.e("sortBtn", "RK_BOTTOMSHEET_RESULT: " + sortType + " " + sortOrder)
+
+            setFragmentResult(
+                Constants.RK_BOTTOMSHEET_RESULT,
+                bundleOf(Constants.EXTRA_MODEL_SORT to SortModel(sortType, sortOrder))
+            )
             dismiss()
         }
     }

@@ -46,11 +46,18 @@ object CoinRepositoryModule {
 
     @Provides
     @Singleton
+    fun provideCoinDomainModelToCoinInfoEntityMapper(): CoinInfoEntityEntityMapper =
+        CoinInfoEntityMapperImpl()
+
+    @Provides
+    @Singleton
     fun provideQueryMapper(): SortFilterToQueryMapper = QueryMapperImpl()
 
     @Provides
     @Singleton
     fun provideRepositoryHelper(): RepositoryHelper = RepositoryHelperImpl()
+
+
 
     @Provides
     @Singleton
@@ -60,6 +67,7 @@ object CoinRepositoryModule {
         coinBaseResponseMapper: GetCoinBaseResponseToDomainModelMapper,
         infoResponseToDomainModelMapper: GetInfoResponseToDomainModelMapper,
         sortFilterToQueryMapper: SortFilterToQueryMapper,
+        coinInfoEntityEntityMapper : CoinInfoEntityEntityMapper,
         repositoryHelper: RepositoryHelper
     ): CoinRepository = CoinRepositoryImpl(
         coinLocalSource,
@@ -67,6 +75,7 @@ object CoinRepositoryModule {
         coinBaseResponseMapper,
         infoResponseToDomainModelMapper,
         sortFilterToQueryMapper,
+        coinInfoEntityEntityMapper,
         repositoryHelper
     )
 }

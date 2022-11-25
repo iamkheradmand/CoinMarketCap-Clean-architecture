@@ -57,30 +57,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
         ) { key, bundle ->
             if (bundle.containsKey(Constants.EXTRA_MODEL_SORT)) {
                 sortModel = bundle.getParcelable(Constants.EXTRA_MODEL_SORT)!!
-                applyFilter()
             } else if (bundle.containsKey(Constants.EXTRA_MODEL_FILTER)) {
                 filterModel = bundle.getParcelable(Constants.EXTRA_MODEL_FILTER)!!
-                Log.e(
-                    "HomeFragment",
-                    "filterModel: " + filterModel!!.volume_24_min + " = " + filterModel!!.percent_change_24_max
-                )
-                applyFilter()
             }
+            applyFilter()
         }
     }
 
-    private fun applyFilter() {
-        queryMode = true
-        resetPageNumber()
-        clearAdapter()
-        showLoading()
-        getCoinsListRemote(++pageNumber)
-    }
-
-
-    private fun clearAdapter() {
-        coinsListAdapter?.clear()
-    }
 
     override fun getViewBinding(
         inflater: LayoutInflater,
@@ -90,34 +73,24 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     }
 
     override fun initViews() {
+        showLoading()
+        databaseSizeChangeListener()
         initRecyclerView()
-//        getCoinsListRemote(++pageNumber)
         getCoinsListLocal(++pageNumber)
+        hasConnection()
     }
 
-    private fun getCoinsListLocal(pageNumber: Int) {
-        Log.e("HomeFragment", "getCoinsListLocal pageNumber = $pageNumber")
-        viewModel.getFromRoomByPage(pageNumber).observe(viewLifecycleOwner, { result ->
-            dismissLoading()
-            if (result != null && result.size > 0) {
-                result.map {
-                    Log.e("HomeFragment", "getDB Success = " + it.name)
-                }
-                coinsListAdapter?.updateItems(result as ArrayList<CoinDomainModel>)
-            } else
-                Log.e("HomeFragment", "getDB Success is empty")
-
-        })
-    }
 
     override fun onClickListeners() {
 
         binding.sortBtn.setOnClickListener {
-            showSortBottomSheet()
+            if (hasConnection())
+                showSortBottomSheet()
         }
 
         binding.filterBtn.setOnClickListener {
-            showFilterBottomSheet()
+            if (hasConnection())
+                showFilterBottomSheet()
         }
 
     }
@@ -133,7 +106,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     private fun showSortBottomSheet() {
         val sortBottomSheet = SortBottomSheet()
         if (sortModel != null)
-            sortBottomSheet.arguments = bundleOf(Constants.EXTRA_MODEL_FILTER to sortModel)
+            sortBottomSheet.arguments = bundleOf(Constants.EXTRA_MODEL_SORT to sortModel)
         sortBottomSheet.show(childFragmentManager, SortBottomSheet.TAG)
     }
 
@@ -166,66 +139,83 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
                 }
             }) // end of addOnScrollListener
         }
+    }
 
+    private fun getCoinsListLocal(pageNumber: Int) {
+        Log.e("getCoinsListLocal", "pageNumber  : " + pageNumber )
+        viewModel.getFromRoomByPage(pageNumber).observe(viewLifecycleOwner, { result ->
+            dismissLoading()
+            result?.let {
+                Log.e("getCoinsListLocal", "getCoinsListRemote  : " + result.size )
+                coinsListAdapter?.updateItems(result as ArrayList<CoinDomainModel>)
+            }
+        })
     }
 
     private fun getCoinsListRemote(pageNumber: Int) {
-        if (!queryMode)
-            viewModel.getCoinsList(pageNumber).observe(viewLifecycleOwner, { result ->
+        viewModel.getCoinsListByQuery(pageNumber, sortModel, filterModel)
+            .observe(viewLifecycleOwner, { result ->
                 when (result) {
                     is ApiResult.Success -> {
                         dismissLoading()
                         coinsListAdapter?.updateItems(result.data as ArrayList<CoinDomainModel>)
-                        Log.e("HomeFragment", "Success" + result.data!![0].name)
                     }
 
                     is ApiResult.Failure -> {
                         dismissLoading()
                         Utils.showToast(requireContext(), result.message ?: "error")
-                        Log.e("HomeFragment", "Failure" + result.message)
                     }
                 }
             })
-        else
-            viewModel.getCoinsListByQuery(pageNumber, sortModel, filterModel)
-                .observe(viewLifecycleOwner, { result ->
-                    when (result) {
-                        is ApiResult.Success -> {
-                            dismissLoading()
-                            coinsListAdapter?.updateItems(result.data as ArrayList<CoinDomainModel>)
-                            Log.e("SplashFragment", "Success" + result.data!![0].name)
-                        }
+    }
 
-                        is ApiResult.Failure -> {
-                            dismissLoading()
-                            Utils.showToast(requireContext(), result.message ?: "error")
-                            Log.e("SplashFragment", "Failure" + result.message)
-                        }
-                    }
-                })
-
+    /*
+    * If the database size becomes zero, it means that the old data is deleted
+    * and the database is being updated
+    * */
+    private fun databaseSizeChangeListener() {
+        viewModel.getDatabaseSize().observe(viewLifecycleOwner, { size ->
+            if (size == 0 && !loading)
+                reset()
+        })
     }
 
     override fun onBackPressed() {
 
     }
 
+    private fun applyFilter() {
+        queryMode = true
+        reset()
+        getCoinsListRemote(++pageNumber)
+    }
+
+
+    private fun clearAdapter() {
+        coinsListAdapter?.clear()
+    }
+
     fun refreshLayout() {
-        Log.e("HomeFragment", "refreshLayout")
-        getCoinsListLocal(++pageNumber)
-//        if (coinsListAdapter!!.hasItem()) {
-//            getCoinsListRemote(++pageNumber)
-//        } else {
-//            resetPageNumber()
-//            getCoinsListRemote(++pageNumber)
-//        }
+        if (queryMode) {
+            getCoinsListRemote(++pageNumber)
+        } else
+            getCoinsListLocal(++pageNumber)
+    }
+
+    private fun reset() {
+        Log.e("getCoinsListLocal", "reset")
+        resetPageNumber()
+        clearAdapter()
+        showLoading()
     }
 
     private fun resetPageNumber() {
         pageNumber = 0
+        Log.e("getCoinsListLocal", "resetPageNumber  $pageNumber")
     }
 
     private fun showLoading() {
+        loading = true
         binding.progressBar.visibility = View.VISIBLE
     }
 

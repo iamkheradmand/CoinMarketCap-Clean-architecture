@@ -18,6 +18,7 @@ import androidx.navigation.NavDeepLinkRequest
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.viewbinding.ViewBinding
+import com.example.coinmarketcap.R
 import com.example.data.utils.Utils
 import com.google.android.material.button.MaterialButton
 
@@ -77,8 +78,13 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     fun isViewNotNull() = _binding != null
 
     fun hasConnection(): Boolean {
-        return Utils.hasConnection(requireContext())
+        if (Utils.hasConnection(requireContext()))
+            return true
+        else
+            Utils.showToast(requireContext(), getString(R.string.err_no_connection))
+        return false
     }
+
 
     abstract fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
     abstract fun initViews()

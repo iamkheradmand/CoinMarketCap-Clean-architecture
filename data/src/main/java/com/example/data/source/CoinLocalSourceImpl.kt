@@ -12,10 +12,14 @@ import javax.inject.Inject
 
 class CoinLocalSourceImpl @Inject constructor(private val coinDao: CoinDao) : CoinLocalSource {
 
+    override suspend fun getRowCount() = coinDao.getRowCount()
+
     override suspend fun getCoinsList() = coinDao.getAll()
 
     override suspend fun getByPage(limit: Int, offset: Int): Flow<List<CoinInfoEntity>> =
         coinDao.getByPage(limit, offset)
 
     override suspend fun insertAllCoins(coins: List<CoinInfoEntity>) = coinDao.insertAll(coins)
+
+    override suspend fun deleteAll() = coinDao.deleteAll()
 }
