@@ -48,7 +48,7 @@ abstract class AppDatabase : RoomDatabase() {
                         val request = OneTimeWorkRequestBuilder<UpdateDatabaseWorker>()
                             .setConstraints(constraints)
                             .build()
-//                        WorkManager.getInstance(context).enqueue(request)
+                        WorkManager.getInstance(context).enqueue(request)
                     }
                 }
                 )

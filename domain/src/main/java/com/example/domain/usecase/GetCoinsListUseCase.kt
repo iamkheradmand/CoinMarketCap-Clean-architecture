@@ -6,6 +6,7 @@ import com.example.domain.entities.CoinDomainModel
 import com.example.domain.entities.FilterModel
 import com.example.domain.entities.SortModel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
 
 /**
@@ -16,8 +17,9 @@ interface GetCoinsListUseCase {
     suspend fun updateDatabaseFromServer(page: Int)
     suspend fun getCoinsListByFlow(page: Int): Flow<ApiResult<List<CoinDomainModel>>>
     suspend fun getCoinsListLocal(): Flow<List<CoinDomainModel>>
-    suspend fun getFromRoomByPage(page: Int): Flow<List<CoinDomainModel>>
+    suspend fun getFromRoomByPage(page: Int): List<CoinDomainModel>
     suspend fun getDatabaseSize() :Flow<Int>
+    suspend fun errorListener() : MutableSharedFlow<Exception>
 
     suspend fun getCoinsListByQuery(
         page: Int,
@@ -39,12 +41,16 @@ class GetCoinsListImpl @Inject constructor(private val coinRepository: CoinRepos
     override suspend fun getCoinsListLocal(): Flow<List<CoinDomainModel>> =
         coinRepository.getCoinsListLocal()
 
-    override suspend fun getFromRoomByPage(page: Int): Flow<List<CoinDomainModel>> =
+    override suspend fun getFromRoomByPage(page: Int): List<CoinDomainModel> =
         coinRepository.getFromRoomByPage(page)
 
     override suspend fun getDatabaseSize(): Flow<Int> {
        return coinRepository.getDatabaseRowCount()
     }
+
+    override suspend fun errorListener(): MutableSharedFlow<Exception> =
+        coinRepository.errorListener()
+
 
     override suspend fun getCoinsListByQuery(
         page: Int,

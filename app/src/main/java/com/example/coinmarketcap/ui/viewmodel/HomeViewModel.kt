@@ -27,33 +27,20 @@ class HomeViewModel @Inject constructor(
     val coinsListUseCase: GetCoinsListUseCase
 ) : ViewModel() {
 
-    /*
-    * The data is first received from the database. if the database is empty, it receives the data
-    * from the server and updates the database.
-    * */
     fun getFromRoomByPage(page: Int) = liveData(Dispatchers.IO) {
-        Log.e("HomeFragment", "HomeViewModel page = $page ")
-        coinsListUseCase
-            .getFromRoomByPage(page)
-            .distinctUntilChanged()
-            .collect {
-//                if (it.isEmpty() && !Utils.hasConnection(context))//dismiss paging loading in offline mode
-//                    emit(it)
-//                else if (it.isNotEmpty())
-//                    emit(it)
-//                else {
-//                    Log.e("HomeFragment", "HomeViewModel ELSE page = $page ")
-//
-//                }
-                emit(it)
-            }
+        emit(coinsListUseCase.getFromRoomByPage(page))
+
+//        coinsListUseCase
+//            .getFromRoomByPage(page)
+//            .distinctUntilChanged()
+//            .collect {
+//                emit(it)
+//            }
     }
 
     fun requestUpdateDatabase(page: Int) {
         viewModelScope.launch {
-            Log.e("HomeFragment", "HomeViewModel updateDatabaseFromServer page = $page ")
-            if (page > 1)
-                coinsListUseCase.updateDatabaseFromServer(page)
+            coinsListUseCase.updateDatabaseFromServer(page)
         }
     }
 
@@ -71,6 +58,12 @@ class HomeViewModel @Inject constructor(
                 emit(it)
             }
         }
+
+    fun errorListener() = liveData(Dispatchers.IO) {
+        coinsListUseCase.errorListener().collect{
+            emit(it)
+        }
+    }
 
     fun getCoinsList(page: Int) = liveData(Dispatchers.IO) {
         coinsListUseCase.getCoinsListByFlow(page).collect {

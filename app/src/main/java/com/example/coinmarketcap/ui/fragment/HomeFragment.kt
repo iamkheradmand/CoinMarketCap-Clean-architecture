@@ -49,6 +49,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     private var sortModel: SortModel? = null
     private var queryMode: Boolean = false
 
+    private var dbRoomPreviousSize = -1
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         childFragmentManager.setFragmentResultListener(
@@ -74,13 +76,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
 
     override fun initViews() {
         showLoading()
-//        databaseSizeChangeListener()
+        databaseSizeChangeListener()
         initRecyclerView()
 //        getCoinsListLocal()
-        getCoinsListRemote()
+//        getCoinsListRemote()
         hasConnection()
+        initErrorListener()
     }
-
 
     override fun onClickListeners() {
 
@@ -143,7 +145,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     }
 
 
-
     private fun getCoinsListRemote() {
         if (queryMode)
             viewModel.getCoinsListByQuery(++pageNumber, sortModel, filterModel)
@@ -178,24 +179,42 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
                 })
     }
 
+    private fun initErrorListener() {
+        viewModel.errorListener().observe(viewLifecycleOwner, { exception ->
+            dismissLoading()
+            coinsListAdapter?.setLoaded()
+            Utils.showToast(requireContext(), exception.message ?: "error")
+        })
+
+    }
+
     /*
     * If the database size becomes zero, it means that the old data is deleted
     * and the database is being updated
     * */
     private fun databaseSizeChangeListener() {
         viewModel.getDatabaseSize().observe(viewLifecycleOwner, { size ->
-            Log.d("HomeFragment", "database size = $size ")
-            if (size == 0) {
-                pageNumber = 1
-                clearAdapter()
-                showLoading()
+            if (size != dbRoomPreviousSize){
+                dbRoomPreviousSize = size
+                if (size == 0) {
+                    reset()
+                    getCoinsListLocal()
+                } else {
+                    if (pageNumber > 0) --pageNumber
+                    getCoinsListLocal()
+                }
             }
+
         })
     }
 
+
+    /*
+    * The data is first received from the database. if the database is empty, it receives the data
+    * from the server and updates the database.
+    * */
     private fun getCoinsListLocal() {
         viewModel.getFromRoomByPage(++pageNumber).observe(viewLifecycleOwner, { result ->
-            Log.d("HomeFragment", "getCoinsListLocal page = $pageNumber result = ${result.size} ")
             if (hasConnection() && result.isEmpty() && loading) {
                 viewModel.requestUpdateDatabase(pageNumber)
             } else {
@@ -224,17 +243,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     }
 
     fun refreshLayout() {
-        Log.d("HomeFragment", "refreshLayout: $pageNumber")
-        getCoinsListRemote()
-
-//        if (queryMode) {
-//            getCoinsListRemote()
-//        } else
-//            getCoinsListLocal()
+//        getCoinsListRemote()
+        if (queryMode) {
+            getCoinsListRemote()
+        } else
+            getCoinsListLocal()
     }
 
     private fun reset() {
-        Log.d("HomeFragment", "reset: ")
         resetPageNumber()
         clearAdapter()
         showLoading()
@@ -242,8 +258,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
 
     private fun resetPageNumber() {
         pageNumber = 0
-        Log.d("HomeFragment", "resetPageNumber = $pageNumber ")
-
     }
 
     private fun showLoading() {

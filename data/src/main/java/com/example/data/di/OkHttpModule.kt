@@ -30,7 +30,7 @@ object OkHttpModule {
     @Provides
     fun loggingInterceptor(): HttpLoggingInterceptor {
         val interceptor = HttpLoggingInterceptor { message: String? ->
-//            if (BuildConfig.DEBUG)
+            if (BuildConfig.DEBUG)
                 Log.d(TAG, message!!)
         }
         interceptor.level = HttpLoggingInterceptor.Level.BODY

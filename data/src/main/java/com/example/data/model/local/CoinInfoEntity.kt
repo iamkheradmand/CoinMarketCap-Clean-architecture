@@ -10,7 +10,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "coin_info")
 data class CoinInfoEntity(
-    @PrimaryKey @ColumnInfo(name = "coin_id") val coinId: Long,
+    @PrimaryKey(autoGenerate = true) var id: Long = 0L,
+    @ColumnInfo(name = "coin_id") val coinId: Long,
     @ColumnInfo(name = "coin_logo") val coinLogo: String,
     @ColumnInfo(name = "coin_name") val coinName: String,
     @ColumnInfo(name = "coin_symbol") val coinSymbol: String,

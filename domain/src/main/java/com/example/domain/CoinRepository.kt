@@ -2,6 +2,7 @@ package com.example.domain
 
 import com.example.domain.entities.*
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 /**
  * Created by Amir mohammad Kheradmand on 11/23/2022.
@@ -13,13 +14,15 @@ interface CoinRepository {
 
     suspend fun clearDatabase()
 
+    suspend fun errorListener() : MutableSharedFlow<Exception>
+
     suspend fun updateDatabaseFromServer(page: Int)
 
     suspend fun getCoinsListByFlow(page: Int): Flow<ApiResult<List<CoinDomainModel>>>
 
     suspend fun getCoinsListLocal(): Flow<List<CoinDomainModel>>
 
-    suspend fun getFromRoomByPage(page: Int): Flow<List<CoinDomainModel>>
+    suspend fun getFromRoomByPage(page: Int): List<CoinDomainModel>
 
     suspend fun getInfo(id: Long): Flow<ApiResult<InfoDomainModel>>
 

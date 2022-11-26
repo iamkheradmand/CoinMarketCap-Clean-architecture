@@ -14,7 +14,7 @@ interface CoinLocalSource {
 
     suspend fun getCoinsList() : Flow<List<CoinInfoEntity>>
 
-    suspend fun getByPage(limit: Int, offset: Int): Flow<List<CoinInfoEntity>>
+    suspend fun getByPage(limit: Int, offset: Int): List<CoinInfoEntity>
 
     suspend fun insertAllCoins(coins: List<CoinInfoEntity>)
 

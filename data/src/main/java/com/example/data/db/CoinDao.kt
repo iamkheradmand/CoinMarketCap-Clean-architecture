@@ -14,8 +14,11 @@ interface CoinDao {
     @Query("SELECT * FROM coin_info ORDER BY cmc_rank ASC")
     fun getAll(): Flow<List<CoinInfoEntity>>
 
-    @Query("SELECT * FROM coin_info ORDER BY cmc_rank ASC LIMIT :limit OFFSET :offset ")
-    fun getByPage(limit: Int, offset: Int): Flow<List<CoinInfoEntity>>
+    @Query("SELECT * FROM coin_info  LIMIT :limit OFFSET :offset ")
+    fun getByPage(limit: Int, offset: Int) : List<CoinInfoEntity>
+
+//    @Query("SELECT * FROM coin_info  LIMIT :limit OFFSET :offset ")
+//    fun getByPage(limit: Int, offset: Int): Flow<List<CoinInfoEntity>>
 
     @Insert
     suspend fun insert(coinInfoEntity: CoinInfoEntity): Long

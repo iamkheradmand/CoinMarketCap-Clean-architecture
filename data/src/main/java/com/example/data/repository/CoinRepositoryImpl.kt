@@ -34,6 +34,8 @@ class CoinRepositoryImpl @Inject constructor(
     private val repositoryHelper: RepositoryHelper
 ) : CoinRepository {
 
+    private val sharedFlow = MutableSharedFlow<Exception>()
+
     override suspend fun getDatabaseRowCount(): Flow<Int> =
         coinLocalSource.getRowCount()
 
@@ -51,6 +53,7 @@ class CoinRepositoryImpl @Inject constructor(
             Log.e("HomeFragment", "insertAllCoins")
             coinLocalSource.insertAllCoins(coinsList)
         } catch (e: Exception) {
+            sharedFlow.emit(e)
             Log.e("CoinRepositoryImpl", "updateDatabaseFromServer Exception $e")
         }
     }
@@ -88,17 +91,23 @@ class CoinRepositoryImpl @Inject constructor(
 
     }
 
-    override suspend fun getFromRoomByPage(page: Int): Flow<List<CoinDomainModel>> {
+    override suspend fun getFromRoomByPage(page: Int): List<CoinDomainModel> {
         val limit = page * Constants.PAGE_SIZE
         val offset = limit - Constants.PAGE_SIZE
         return coinLocalSource.getByPage(limit, offset)
-            .map {
-                it.map { coinInfoEntity ->
-                    coinInfoEntityEntityMapper.toCoinDomainModel(
-                        coinInfoEntity
-                    )
-                }
-            }.flowOn(Dispatchers.IO)
+            .map { coinInfoEntity ->
+                coinInfoEntityEntityMapper.toCoinDomainModel(
+                    coinInfoEntity
+                )
+            }
+
+//            .map {
+//                it.map { coinInfoEntity ->
+//                    coinInfoEntityEntityMapper.toCoinDomainModel(
+//                        coinInfoEntity
+//                    )
+//                }
+//            }
     }
 
     override suspend fun getInfo(id: Long): Flow<ApiResult<InfoDomainModel>> =
@@ -149,6 +158,10 @@ class CoinRepositoryImpl @Inject constructor(
 
     override suspend fun clearDatabase() {
         coinLocalSource.deleteAll()
+    }
+
+    override suspend fun errorListener(): MutableSharedFlow<Exception> {
+        return sharedFlow
     }
 
 }
