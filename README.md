@@ -27,12 +27,12 @@
     .
     
     ├── app                 #Contains all the Android UI framework components (e.g. Activities, Fragments, ViewModels...) and the related resources (e.g. images, strings...).
-    │   ├── ui               This module has access to all modules But it uses the domain module to communicate with the data module
+    │   ├── ui                This module has access to all modules But it uses the domain module to communicate with the data module
     |    
     |   
     |
     ├── domain              #Contains the platform-independent business logic and Domain models.
-    |   │ 					 This module cannot access any other module    
+    |   │ 		         This module cannot access any other module    
     |   |
     |   ├── di                
     |   ├── entities           
@@ -40,8 +40,8 @@
     |    
     │ 
     |
-    ├── data    			#Contains the repositories, Database, the data sources api implementations and the corresponding api-specific models.
-	|   │ 					 This module can only access domain module
+    ├── data                #Contains the repositories, Database, the data sources api implementations and the corresponding api-specific models.
+	|   │ 		         This module can only access domain module
     │   ├── di              
     │   ├── db 
     │   ├── datasource	
