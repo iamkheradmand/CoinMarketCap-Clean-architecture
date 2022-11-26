@@ -1,6 +1,5 @@
-"# CoinMarketCap - Clean architecture" 
-	
-_ A simple project to display a list of cryptocurrencies built with MVVM and Clean Architecture
+# CoinMarketCap - Clean architecture
+  A simple project to display a list of cryptocurrencies built with MVVM and Clean Architecture
 
 ## Built With 🛠
 - [Kotlin](https://kotlinlang.org/) - First class and official programming language for Android development.
