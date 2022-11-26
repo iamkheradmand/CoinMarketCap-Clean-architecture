@@ -20,8 +20,8 @@
 - [Mockk ](https://mockk.io/) - Mockk is a mocking framework built for Kotlin.
 
 # Architecture
-	Architecture is a system design that breaks down components into individual parts. The goal of clean architecture is to find better software like maintainable, testable, easy to use, scalable, and much more — an accurate guide for engineers.
-    The architecture proposed consist of 3 different layers:
+  Architecture is a system design that breaks down components into individual parts. The goal of clean architecture is to find better software like maintainable, testable, easy to use, scalable, and much more — an accurate guide for engineers.
+    The architecture proposed consist of 3 different layers :
     
     # Root Package
     .
