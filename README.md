@@ -1,7 +1,7 @@
 # CoinMarketCap - Clean architecture
   A simple project to display a list of cryptocurrencies built with MVVM and Clean Architecture
 
-# Architecture
+# 🏛️ Architecture
   Architecture is a system design that breaks down components into individual parts. The goal of clean architecture is to find better software like maintainable, testable, easy to use, scalable, and much more — an accurate guide for engineers.
     The architecture proposed consist of 3 different layers :
     
@@ -36,16 +36,16 @@
     │   ├── utils	
     
 	
-# Offline-first	
+# 📱 Offline-first	
   An offline-first app is an app that is able to perform all, or a critical subset of its core functionality without access to the internet. That is, it can perform some or all of its business logic offline.
   In this app, data is received only through the database. If the data is not found in the database, the database is updated by calling api and receiving data from the server. In offline mode, as soon as the user connects to the Internet, the database receives the latest data through a work manager.
 
-# Testing     
+# 🧪 Testing     
 * In the data layer the database, repository and mappers have been tested
 * MockK has been used for mocking.
 
 
-## Built With 🛠
+# 🛠 Built With 
 - [Kotlin](https://kotlinlang.org/) - First class and official programming language for Android development.
 - [Coroutines](https://kotlinlang.org/docs/reference/coroutines-overview.html) - For asynchronous and more.
 - [Flow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/) - A cold asynchronous data stream that sequentially emits values and completes normally or with an exception.
