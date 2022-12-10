@@ -1,5 +1,6 @@
 package com.example.coinmarketcap.ui.fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -31,7 +32,7 @@ import javax.inject.Inject
  */
 
 @AndroidEntryPoint
-class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemListener {
+class HomeFragment : BaseFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate), CoinsListAdapter.ItemListener {
 
     @Inject
     lateinit var picasso: Picasso
@@ -67,12 +68,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     }
 
 
-    override fun getViewBinding(
-        inflater: LayoutInflater,
-        container: ViewGroup?
-    ): FragmentHomeBinding {
-        return FragmentHomeBinding.inflate(inflater, container, false)
-    }
+//    override fun getViewBinding(
+//        inflater: LayoutInflater,
+//        container: ViewGroup?
+//    ): FragmentHomeBinding {
+//        return FragmentHomeBinding.inflate(inflater, container, false)
+//    }
 
     override fun initViews() {
         showLoading()
@@ -86,12 +87,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
 
     override fun onClickListeners() {
 
-        binding.sortBtn.setOnClickListener {
+        getVBinding()?.sortBtn?.setOnClickListener {
             if (hasConnection())
                 showSortBottomSheet()
         }
 
-        binding.filterBtn.setOnClickListener {
+        getVBinding()?.filterBtn?.setOnClickListener {
             if (hasConnection())
                 showFilterBottomSheet()
         }
@@ -114,7 +115,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     }
 
     private fun initRecyclerView() {
-        binding.recyclerView.apply {
+        getVBinding()?.recyclerView?.apply {
             setHasFixedSize(true)
             val linearLayoutManager = LinearLayoutManager(requireContext())
             layoutManager = linearLayoutManager
@@ -228,7 +229,11 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     }
 
     override fun onBackPressed() {
-
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_HOME)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+        activity?.startActivity(intent)
+        activity?.finish()
     }
 
     private fun applyFilter() {
@@ -262,12 +267,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
 
     private fun showLoading() {
         loading = true
-        binding.progressBar.visibility = View.VISIBLE
+        getVBinding()?.progressBar?.visibility = View.VISIBLE
     }
 
     private fun dismissLoading() {
         loading = false
-        binding.progressBar.visibility = View.GONE
+        getVBinding()?.progressBar?.visibility = View.GONE
     }
 
     override fun isEndOfList() {
@@ -275,8 +280,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(), CoinsListAdapter.ItemL
     }
 
     override fun onDestroyView() {
+        Log.e("HomeFragment", "onDestroyView")
+
         if (isViewNotNull()) {
-            binding.recyclerView.adapter = null
+            getVBinding()?.recyclerView?.adapter = null
         }
         coinsListAdapter = null
         super.onDestroyView()

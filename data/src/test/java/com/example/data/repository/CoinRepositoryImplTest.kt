@@ -105,7 +105,8 @@ class CoinRepositoryImplTest {
     fun testGetInfoApi() = runTest {
 
         val mockedInfoResponse = MockResponseFileReader("JsonSample/infoResponseJson.json").content
-        server.enqueue(MockResponse().setResponseCode(200).setBody(mockedInfoResponse))
+        server.enqueue(MockResponse().
+        setResponseCode(200).setBody(mockedInfoResponse))
 
         val info = GetInfoResponse(
             id = 1,

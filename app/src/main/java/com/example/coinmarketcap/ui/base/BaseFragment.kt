@@ -26,14 +26,12 @@ import com.google.android.material.button.MaterialButton
  * Created by Amir mohammad Kheradmand on 11/23/2022.
  */
 
-abstract class BaseFragment<VB : ViewBinding> : Fragment() {
+abstract class BaseFragment<VB : ViewBinding>(val bindingInflater: (layoutInflater: LayoutInflater) -> VB) :
+    Fragment(), IBinding<VB> by BindingImpl() {
 
-    private var _binding: VB? = null
-    protected val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         val onBackPressedCallback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 Log.e("BaseFragment", "onBackPressed")
@@ -48,8 +46,8 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = getViewBinding(inflater, container)
-        return binding.root
+        setVBinding(bindingInflater(inflater))
+        return getVBinding()!!.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,7 +58,13 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
+        Log.e("BaseFragment", "onDestroyView")
+        onDestroyViewI()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.e("BaseFragment", "onDestroy")
     }
 
     fun navigateTo(destination: Int) {
@@ -75,7 +79,8 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
         findNavController().popBackStack()
     }
 
-    fun isViewNotNull() = _binding != null
+
+    fun isViewNotNull() = getVBinding() != null
 
     fun hasConnection(): Boolean {
         if (Utils.hasConnection(requireContext()))
@@ -86,7 +91,6 @@ abstract class BaseFragment<VB : ViewBinding> : Fragment() {
     }
 
 
-    abstract fun getViewBinding(inflater: LayoutInflater, container: ViewGroup?): VB
     abstract fun initViews()
     abstract fun onClickListeners()
     abstract fun onBackPressed()

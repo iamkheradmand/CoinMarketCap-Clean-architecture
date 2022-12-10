@@ -19,7 +19,26 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        config {
+            v1SigningEnabled true
+            v2SigningEnabled true
+        }
+        debug {
+            v1SigningEnabled true
+            v2SigningEnabled false
+        }
+    }
+
+
     buildTypes {
+
+        debug {
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'

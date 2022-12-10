@@ -29,7 +29,6 @@ class HomeViewModel @Inject constructor(
 
     fun getFromRoomByPage(page: Int) = liveData(Dispatchers.IO) {
         emit(coinsListUseCase.getFromRoomByPage(page))
-
 //        coinsListUseCase
 //            .getFromRoomByPage(page)
 //            .distinctUntilChanged()
